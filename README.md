@@ -11,14 +11,15 @@ photometer, and a four-day protocol that measures those biases with 1 µm silica
 | `src/index.src.html` | Page source. Bilingual strings are written `{{中文||English}}`. |
 | `src/references.html` | Reference list (each entry checked against its source page). |
 | `data/site_data.json` | Data behind the real-data figures: the 434 h run (down-sampled), reference-count histogram, the 19 Sept 2026 silica titration. |
-| `analysis/replay_algorithms.py` | Replays one raw data set through eight reduction algorithms. `--selftest` runs on synthetic data. |
+| `analysis/firmware_estimators.py` | Line-for-line ports of the four OD estimators in firmware v3.10.9 (`mad`, `qn`, `biweight`, `upper`); run it to print their behaviour. |
+| `analysis/replay_algorithms.py` | Replays one raw data set through eleven reduction algorithms (those four plus seven controls and candidates). `--selftest` runs on synthetic data. |
 | `PREREGISTRATION.md` | Algorithm list, metrics and decision rule, to be frozen before data collection. |
 
 ## What is established and what is not
 Established from our own logs and code: the reference channel sat at about 32 counts in the 434 h run
 (0.067 OD per count at a path factor of 5; 91.5 % of readings on an integer count; 26 of 29 count
-changes between 40 and 230 h came with an OD jump above 0.04), and the firmware's MAD gate has a
-floor of 1e-6, which makes it return the mode on quantised data.
+changes between 40 and 230 h came with an OD jump above 0.04), and the firmware's `mad`, `qn` and
+`biweight` estimators share a scale floor of 1e-6, which makes all three return the mode on quantised data.
 
 Not yet measured: everything marked "to do" in section 07 of the page. The interactive figures in
 section 03 are simulations and derivations — predictions, not results.

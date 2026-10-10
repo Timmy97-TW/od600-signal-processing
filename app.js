@@ -150,9 +150,9 @@
     for (let e = 1; e <= 3.7; e += 0.02) { const N = Math.pow(10, e); pts.push([N, step(N)]); }
     const p = plot($("qfig"), { x: [10, 5000], y: [0, 0.2], logx: true, xt: [10, 30, 100, 300, 1000, 3000], xlab: L("通道上的 counts", "counts on the channel"), ylab: L("每 count 的 OD", "OD per count"),
       series: [{ pts, color: C.s1, name: L("1 count", "1 count") }], tipx: (v) => Math.round(v) + " counts", tipy: (v) => v.toFixed(4) + " OD" });
-    [[32, L("434 h 運轉", "434 h run"), C.s2], [265, L("102 h 運轉", "102 h run"), C.s3]].forEach((m) => {
+    [[32, L("7/21 運轉", "21 Jul run"), C.s2, -8], [265, L("9/02", "2 Sep"), C.s3, -22], [304, L("10/09", "9 Oct"), C.s4, -8]].forEach((m) => {
       el("circle", { cx: p.X(m[0]), cy: p.Y(step(m[0])), r: 6, fill: m[2], stroke: "#fff", "stroke-width": 2 }, p.g);
-      el("text", { x: p.X(m[0]) + 10, y: p.Y(step(m[0])) - 8, "font-size": 12.5, fill: C.ink2 }, p.g, m[1] + " · " + step(m[0]).toFixed(3));
+      el("text", { x: p.X(m[0]) + 10, y: p.Y(step(m[0])) + m[3], "font-size": 12.5, fill: C.ink2 }, p.g, m[1] + " · " + step(m[0]).toFixed(3));
     });
     el("line", { x1: p.X(n), x2: p.X(n), y1: p.b.y, y2: p.b.y + p.b.h, stroke: C.ink, "stroke-width": 1, "stroke-dasharray": "3 3" }, p.g);
     readout("q_read", [[step(n).toFixed(step(n) < 0.01 ? 4 : 3), L("1 count 的 OD（×5）", "OD per count (×5)")], [(K * 0.4343 * 0.2887 / n).toFixed(4), L("量化雜訊 σ（OD）", "quantisation σ (OD)")], [(100 / n).toFixed(n > 500 ? 2 : 1) + "%", L("1 count 佔訊號比例", "one count as share of signal")]]);

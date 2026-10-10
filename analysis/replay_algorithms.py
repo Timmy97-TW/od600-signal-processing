@@ -21,6 +21,7 @@ Usage:
 Standard library + numpy only.
 """
 import csv
+import os
 import sys
 from collections import defaultdict
 
@@ -53,13 +54,20 @@ def upper_band(x, lo=0.6, hi=0.9):
     return sel.mean() if len(sel) else np.median(x)
 
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from firmware_estimators import est_mad, est_qn, est_biweight, est_upper  # exact v3.10.9 ports
+
+both = lambda f: (lambda s, r: (f(s), f(r)))
 ALGORITHMS = {
-    "A0 firmware (MAD gate, floor 1e-6)": lambda s, r: (mad_mean(s), mad_mean(r)),
-    "A1 mean": lambda s, r: (s.mean(), r.mean()),
-    "A2 median": lambda s, r: (np.median(s), np.median(r)),
-    "A3 trimmed mean 20%": lambda s, r: (trimmed(s), trimmed(r)),
-    "A4 upper band on sample": lambda s, r: (upper_band(s), r.mean()),
-    "A7 MAD gate, floor = 1 count": lambda s, r: (mad_mean(s, floor=1.0), mad_mean(r, floor=1.0)),
+    "E-1 mad (current firmware)": both(est_mad),
+    "E-2 qn": both(est_qn),
+    "E-5 biweight": both(est_biweight),
+    "E-3 upper": both(est_upper),
+    "C1 mean": lambda s, r: (s.mean(), r.mean()),
+    "C2 median": lambda s, r: (np.median(s), np.median(r)),
+    "C3 trimmed mean 20%": lambda s, r: (trimmed(s), trimmed(r)),
+    "C4 upper band on sample": lambda s, r: (upper_band(s), r.mean()),
+    "C7 mad, floor = 1 count": lambda s, r: (mad_mean(s, floor=1.0), mad_mean(r, floor=1.0)),
 }
 
 
@@ -71,10 +79,10 @@ def reduce_burst(dark_s, dark_r, lit_s, lit_r):
     for name, f in ALGORITHMS.items():
         es, er = f(s, r)
         out[name] = (es - ds) / (er - dr)
-    # A5: log first, average afterwards (the Jensen control)
-    out["A5 mean of per-sample OD"] = 10 ** np.mean(np.log10((s - ds) / (r - dr)))
-    # A6: ratio sample by sample, then average the ratios
-    out["A6 mean of paired ratios"] = np.mean((s - ds) / (r - dr))
+    # C5: log first, average afterwards (the Jensen control)
+    out["C5 mean of per-sample OD"] = 10 ** np.mean(np.log10((s - ds) / (r - dr)))
+    # C6: ratio sample by sample, then average the ratios
+    out["C6 mean of paired ratios"] = np.mean((s - ds) / (r - dr))
     return out
 
 
