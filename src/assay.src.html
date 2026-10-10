@@ -1,0 +1,171 @@
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">SiO₂ Calibration Assay · 2026-10-10</p>
+  <h1>{{兩台光度計、四個估計器、<br>一台 BioDrop 當裁判||Two photometers, four estimators, one BioDrop as referee}}</h1>
+  <p class="lead">{{今天用 1 µm SiO₂ 微球做 50 次累加，同時讀兩台 inline 光度計（傾斜版、光纖簡化版）與 BioDrop。這一頁先講四個估計器差在哪，再把 SOP v1.1 畫成看得懂的流程，最後寫下實驗前的預測，做完再回來對答案。||Today we dose 1 µm silica microspheres 50 times and read two inline photometers (the tilted version and the simplified fibre version) alongside a BioDrop. This page explains how the four estimators differ, draws SOP v1.1 as a procedure you can follow, and writes down our predictions before the run so we can check them afterwards.}}</p>
+  <div class="tiles">
+    <div class="tile"><div class="n">51</div><div class="l">{{個濃度點（n = 0 到 50），0 到 1.59 mg/mL||concentration points (n = 0 to 50), 0 to 1.59 mg/mL}}</div></div>
+    <div class="tile"><div class="n">3</div><div class="l">{{台儀器讀同一杯液體：光度計 1、光度計 2、BioDrop||instruments reading the same liquid: photometer 1, photometer 2, BioDrop}}</div></div>
+    <div class="tile"><div class="n">4</div><div class="l">{{個估計器：<code>mad</code>、<code>qn</code>、<code>biweight</code>、<code>upper</code>||estimators: <code>mad</code>, <code>qn</code>, <code>biweight</code>, <code>upper</code>}}</div></div>
+    <div class="tile"><div class="n">8</div><div class="l">{{條寫在實驗前的預測，每條都有數字門檻||predictions written before the run, each with a numeric threshold}}</div></div>
+  </div>
+</div></header>
+
+<!-- ======================================================== ESTIMATORS -->
+<section id="a-est" class="alt"><div class="wrap">
+  <p class="eyebrow">A1 · {{四個估計器||The four estimators}}</p>
+  <h2>{{同樣 14 個樣本，四種「取代表值」的方法||The same 14 samples, four ways to pick one value}}</h2>
+  <div class="narrow">
+  <p>{{每次量測，LED 亮起，感測器連續讀 16 次，丟掉前 2 次，剩 14 個數字。估計器的工作是把這 14 個數字變成一個。四個估計器的第一步都一樣：先找中位數。差別在接下來<b>相信哪些樣本</b>。||In each measurement the LED turns on, the sensor reads 16 times, the first 2 are dropped, and 14 numbers remain. The estimator's job is to turn those 14 into one. All four begin the same way, by finding the median. They differ in <b>which samples they then trust</b>.}}</p>
+  </div>
+  <div class="tw"><table>
+    <tr><th>{{估計器||Estimator}}</th><th>{{怎麼決定「正常範圍」||How it sets the normal range}}</th><th>{{怎麼用樣本||How it uses the samples}}</th><th>{{一句話||In one line}}</th></tr>
+    <tr><td><b><code>mad</code></b> E-1<br><span class="pill ok">{{現行||current}}</span></td><td>{{MAD：每個樣本到中位數的距離，再取中位數||MAD: the median of each sample's distance from the median}}</td><td>{{中位數 ± 3×MAD 以內的全部平均，以外的丟掉||averages everything within median ± 3×MAD, discards the rest}}</td><td>{{兩邊對稱地切掉離群值||cuts outliers symmetrically on both sides}}</td></tr>
+    <tr><td><b><code>qn</code></b> E-2</td><td>{{Qn：所有「兩兩差距」裡偏小的那一個分位數||Qn: a low quantile of all pairwise differences}}</td><td>{{同 <code>mad</code>，只是門檻寬度用 Qn 算||as <code>mad</code>, with the gate width computed from Qn}}</td><td>{{換一把尺量離散度，切法不變||a different ruler for spread, the same cut}}</td></tr>
+    <tr><td><b><code>biweight</code></b> E-5</td><td>{{MAD（同 <code>mad</code>）||MAD (as in <code>mad</code>)}}</td><td>{{不是「留或丟」，而是離中心越遠權重越低，到 4.685×MAD 降為 0||no keep-or-drop: weight falls with distance from the centre and reaches 0 at 4.685×MAD}}</td><td>{{軟性降權，不硬切||soft down-weighting instead of a hard cut}}</td></tr>
+    <tr><td><b><code>upper</code></b> E-3</td><td>{{MAD，只用來數有幾個被判成氣泡||MAD, used only to count how many are flagged as bubbles}}</td><td>{{只平均「大於等於中位數」的那一半||averages only the half at or above the median}}</td><td>{{只相信比較亮的樣本，因為氣泡只會讓光變暗||trusts only the brighter samples, because bubbles can only darken}}</td></tr>
+  </table></div>
+
+  <div class="fig"><h4>{{看一個 burst：每個估計器留下了誰||One burst: who each estimator keeps}}</h4>
+    <p class="sub">{{每個點是一個樣本。實心＝被採用，空心＝被丟掉或沒用到，顏色越淡＝權重越低||each dot is one sample. filled = used, hollow = dropped or unused, paler = lower weight}}</p>
+    <div class="ctl">
+      <div class="seg" id="e_sc" role="group">
+        <button data-s="clean" aria-pressed="true">{{乾淨||Clean}}</button><button data-s="low">{{counts 很少||Few counts}}</button><button data-s="b15">{{少量氣泡||Some bubbles}}</button><button data-s="b35">{{很多氣泡||Many bubbles}}</button>
+      </div>
+      <button class="btn" id="e_new">{{換一個 burst||New burst}}</button>
+    </div>
+    <div class="figwrap"><svg id="efig4" viewBox="0 0 900 400"></svg></div>
+    <p class="cap" id="e_note"></p>
+  </div>
+
+  <div class="fig"><h4>{{重複 4000 個 burst：典型誤差，以及有多少次讀錯||4000 bursts repeated: the typical error, and how often a reading is wrong}}</h4>
+    <p class="sub">{{每格是「誤差的中位數 · 誤差超過 0.05 OD 的讀值比例」，已乘光程係數 5。色塊越深代表越常讀錯||each cell is median error · share of readings off by more than 0.05 OD, path factor of 5 applied. darker shading means wrong more often}}</p>
+    <div class="tw" style="margin:8px 0 0"><table id="e_tab"></table></div>
+    <p class="cap">{{三個重點。第一，<code>mad</code>、<code>qn</code>、<code>biweight</code> 在四種情況下幾乎一樣。第二，氣泡一多，這三個讀錯的比例一起上升到約 18%，<code>upper</code> 不到一半；氣泡少的時候四個都很少讀錯。第三，<code>upper</code> 在乾淨時有一個小的固定偏移（通道估計值偏高約 0.75σ）：只要空白也用 <code>upper</code> 量，偏移會互相抵消；空白若用別的估計器量，偏移就留在 OD 裡。||Three points. First, <code>mad</code>, <code>qn</code> and <code>biweight</code> are nearly identical in all four cases. Second, with many bubbles those three go wrong together about 18% of the time and <code>upper</code> less than half as often; with few bubbles all four are rarely wrong. Third, <code>upper</code> carries a small fixed offset when clean (the channel estimate sits about 0.75σ high): it cancels as long as the blank was also taken with <code>upper</code>, and stays in the OD if the blank was taken with another estimator.}}</p>
+  </div>
+
+  <div class="note">{{<b>今天最容易犯的錯：空白跟估計器不配對。</b>韌體只存一個 blankRatio，是「按下校正空白當時」的估計器算出來的。切到另一個估計器後，OD 仍然用舊的空白。所以今天的 OD 不看介面上的數字，而是事後用 CSV 裡的 <code>lux_sample</code>、<code>lux_ref</code> 重算：每個估計器用<b>它自己在 n = 0 的比值</b>當空白。||<b>The easiest mistake today: a blank that does not match the estimator.</b> The firmware stores one blankRatio, computed by whichever estimator was active when the blank button was pressed. After switching estimator, OD is still computed against that old blank. So today's OD is not read off the interface. It is recomputed afterwards from <code>lux_sample</code> and <code>lux_ref</code> in the CSV, with each estimator using <b>its own ratio at n = 0</b> as its blank.}}</div>
+</div></section>
+
+<!-- ======================================================== SETUP -->
+<section id="a-setup"><div class="wrap">
+  <p class="eyebrow">A2 · {{實驗怎麼做||How the assay runs}}</p>
+  <h2>{{一杯水，一個循環，三台儀器||One beaker, one loop, three instruments}}</h2>
+  <p class="lead">{{依 SOP v1.1（2026-10-10）。每次先取走 1 mL、再加 1 mL 工作液，總體積維持 50 mL。||Following SOP v1.1 (10 Oct 2026). Each cycle removes 1 mL and then adds 1 mL of working stock, holding the total at 50 mL.}}</p>
+  <div class="fig"><div class="figwrap"><svg id="loopfig" viewBox="0 0 900 330"></svg></div>
+  <p class="cap">{{兩台光度計串聯在同一條管路上，讀到的是同一份液體。BioDrop 讀的是從燒杯取出的 1 mL。三個讀值來自同一個濃度狀態 C<sub>n</sub>，可以一點對一點比較。||The two photometers sit in series on one line and see the same liquid. The BioDrop reads the 1 mL taken from the beaker. All three readings come from the same state C<sub>n</sub> and can be paired point by point.}}</p></div>
+
+  <h3>{{開始前（約 30 分鐘）||Before you start (about 30 minutes)}}</h3>
+  <div class="grid2">
+    <div class="card"><h4>{{試劑||Reagent}}</h4><ol class="steps" style="font-size:15.5px">
+      <li>{{原液（25 mg/mL）先 vortex 30 秒。||Vortex the stock (25 mg/mL) for 30 s.}}</li>
+      <li>{{<b>6 mL 原液 + 54 mL DI 水</b> → 60 mL 工作液（2.5 mg/mL）。||<b>6 mL stock + 54 mL DI water</b> → 60 mL of working stock (2.5 mg/mL).}}</li>
+      <li>{{工作液<b>每次吸取前都要 vortex</b>。微球每小時沉約 3 mm，放著不動濃度就不對了。||<b>Vortex the working stock before every draw.</b> The beads sink about 3 mm per hour; left standing, the concentration is wrong.}}</li>
+    </ol></div>
+    <div class="card"><h4>{{管路與空白||Loop and blank}}</h4><ol class="steps" style="font-size:15.5px">
+      <li>{{<b>先量管路體積 v<sub>t</sub>。</b>空管路接好後，量筒裝 DI 水灌滿管路與兩個 flow cell，記下用掉幾 mL。||<b>Measure the hold-up volume v<sub>t</sub> first.</b> With the empty loop connected, fill the tubing and both flow cells from a measuring cylinder and note the mL used.}}</li>
+      <li>{{燒杯加 50 mL DI 水，開攪拌、開幫浦（約 60 mL/min），趕走所有氣泡。||Add 50 mL DI water to the beaker, start stirring and the pump (about 60 mL/min), and clear every bubble.}}</li>
+      <li>{{循環 3 分鐘後，記下兩台的 sample 與 reference（lux）。<b>reference 應 ≥ 250 lx</b>，不到就先調光路。||After 3 min of circulation note sample and reference (lux) on both. <b>Reference should be ≥ 250 lx</b>; if not, adjust the optics first.}}</li>
+      <li>{{兩台都按「校正空白」，確認介面頂端的黃色提示消失。||Press "calibrate blank" on both and confirm the yellow banner at the top has gone.}}</li>
+      <li>{{<b>四個估計器各量 3 筆空白</b>（切換方法見下）。這就是各自的空白比值。||<b>Take 3 blank readings with each of the four estimators</b> (switching described below). These are their individual blank ratios.}}</li>
+      <li>{{從燒杯取 1 mL DI 水當 BioDrop 的空白。<b>不要補水</b>，燒杯現在是 49 mL。||Take 1 mL of DI water from the beaker as the BioDrop blank. <b>Do not top up</b>; the beaker now holds 49 mL.}}</li>
+    </ol></div>
+  </div>
+  <div class="card"><h4>{{介面設定（兩台都要）||Interface settings (on both)}}</h4>
+    <ul style="font-size:15.5px;margin:0">
+      <li>{{按「開始錄製」。今天所有數字都從板上的 CSV 來，不靠手抄。||Press "start recording". All of today's numbers come from the CSV on the board, not from hand copying.}}</li>
+      <li>{{取樣時長（＝OD 量測間隔）設 <b>5 秒</b>，光程係數維持 5。||Set the sampling window (which is the OD interval) to <b>5 s</b>; keep the path factor at 5.}}</li>
+      <li>{{準備一張紙本時間表：每次加樣的<b>時刻</b>與 n。CSV 沒有 n 這一欄，事後靠時間對回去。||Keep a paper time sheet: the <b>clock time</b> and n of every addition. The CSV has no column for n; it is matched back by time.}}</li>
+      <li>{{若光纖簡化版沒有「演算法切換」，就讓它用自己的演算法全程錄製，並在時間表上註明。||If the simplified fibre version has no algorithm switch, let it record throughout with its own algorithm and note that on the time sheet.}}</li>
+    </ul></div>
+
+  <h3>{{一個循環（重複 50 次）||One cycle (repeated 50 times)}}</h3>
+  <div class="cyc">
+    <div><b>1</b><h4>{{加||Add}}</h4><p>{{vortex 工作液，吸 <b>1 mL</b> 加進燒杯。寫下時刻。||Vortex the working stock, add <b>1 mL</b> to the beaker. Write down the time.}}</p><span>~30 s</span></div>
+    <div><b>2</b><h4>{{等||Wait}}</h4><p>{{<b>3 分鐘</b>（至少循環三圈）。看一眼 flow cell 有沒有氣泡。||<b>3 minutes</b> (at least three loop turnovers). Check the flow cells for bubbles.}}</p><span>3 min</span></div>
+    <div><b>3</b><h4>{{讀||Read}}</h4><p>{{一般循環：維持 <code>mad</code>，等 3 筆新讀值。<b>每 5 個循環</b>（n = 5, 10, …, 50）：四個估計器各 3 筆。||Ordinary cycle: stay on <code>mad</code>, wait for 3 new readings. <b>Every 5th cycle</b> (n = 5, 10, …, 50): 3 readings with each of the four estimators.}}</p><span>20 s / 90 s</span></div>
+    <div><b>4</b><h4>{{取||Take}}</h4><p>{{從燒杯取 <b>1 mL</b>，立刻上 BioDrop。||Take <b>1 mL</b> from the beaker and go straight to the BioDrop.}}</p><span>~20 s</span></div>
+    <div><b>5</b><h4>BioDrop</h4><p>{{輕輕混勻，<b>1 分鐘內</b>讀完，寫在紀錄表。理論 OD &gt; 1.0 的點再做一次 5 倍稀釋。||Mix gently, read <b>within 1 minute</b>, write it on the log. Where the theoretical OD exceeds 1.0, also read a 5-fold dilution.}}</p><span>~60 s</span></div>
+  </div>
+  <p class="cap">{{四估計器的切換順序每次往後輪一格（n = 5：mad→qn→biweight→upper；n = 10：qn→biweight→upper→mad；以此類推），這樣濃度若在 90 秒內有微小漂移，不會總是落在同一個估計器頭上。切換後要等「下一個視窗」才生效，所以每次切換後的第一筆不算。||Rotate the starting estimator each time (n = 5: mad→qn→biweight→upper; n = 10: qn→biweight→upper→mad; and so on), so that any small drift in concentration over those 90 s does not always fall on the same estimator. A switch takes effect from the next window, so discard the first reading after each switch.}}</p>
+
+  <h3>{{現在在第幾步||Where am I}}</h3>
+  <div class="fig"><h4>{{循環小幫手||Cycle helper}}</h4>
+    <div class="ctl"><label>n <input type="range" id="h_n" min="0" max="50" step="1" value="5" style="width:300px"><output id="h_nv"></output></label>
+    <label>{{管路體積 v<sub>t</sub>（mL）||Hold-up v<sub>t</sub> (mL)}} <input type="range" id="h_vt" min="0" max="20" step="0.5" value="0"><output id="h_vtv"></output></label></div>
+    <div class="read" id="h_read"></div>
+    <div class="figwrap"><svg id="cnfig" viewBox="0 0 900 300"></svg></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>{{C<sub>n</sub>，SOP 表（V = 50 mL）||C<sub>n</sub>, SOP table (V = 50 mL)}}</span><span><i style="background:var(--s2)"></i>{{C<sub>n</sub>，計入管路體積||C<sub>n</sub> with hold-up included}}</span><span><i style="background:var(--s4);height:9px;width:9px;border-radius:50%"></i>{{四估計器停靠點||four-estimator stops}}</span><span><i style="background:var(--s3);height:9px;width:9px;border-radius:50%"></i>{{氣泡挑戰||bubble challenge}}</span></div>
+    <p class="cap">{{把 v<sub>t</sub> 拉到你實際量到的值。管路體積不計入的話，前面幾點的實際濃度會比表上低：v<sub>t</sub> = 8 mL 時，n = 5 低 13%、n = 50 低 9%。這會讓曲線看起來往上彎，卻跟光度計無關。||Drag v<sub>t</sub> to the value you measured. If the hold-up is ignored, the true concentration of the early points is lower than tabulated: with v<sub>t</sub> = 8 mL, 13% lower at n = 5 and 9% lower at n = 50. That makes a curve appear to bend upward for a reason unrelated to the photometer.}}</p>
+  </div>
+
+  <h3>{{三個加做的檢查||Three added checks}}</h3>
+  <p>{{下面三項不在 SOP v1.1 裡，是為了讓估計器的差別看得出來，以及讓 BioDrop 這個裁判本身可以被檢查。||These three are not in SOP v1.1. They make the differences between estimators visible and let the referee, the BioDrop, be checked as well.}}</p>
+  <div class="tw"><table>
+    <tr><th>{{檢查||Check}}</th><th>{{什麼時候||When}}</th><th>{{怎麼做||How}}</th><th>{{為什麼||Why}}</th></tr>
+    <tr><td><b>{{氣泡挑戰||Bubble challenge}}</b></td><td>n = 10, 25, 40<br>{{（四估計器讀完之後）||(after the four-estimator readings)}}</td><td>{{把進液管口提到液面讓它吸空氣 20–30 秒，氣泡通過 flow cell 時，四個估計器各錄 10 筆（順序同該站）。結束後確認氣泡清乾淨再繼續。||Lift the inlet to the surface so it draws air for 20–30 s; while bubbles pass the flow cells, record 10 readings with each estimator (same order as that stop). Confirm the loop is clear again before continuing.}}</td><td>{{乾淨的微球懸浮液裡四個估計器預期一樣；只有干擾才分得出來||in clean bead suspension the four are expected to agree; only a disturbance separates them}}</td></tr>
+    <tr><td><b>{{BioDrop 稀釋對照||BioDrop dilution check}}</b></td><td>{{理論 OD &gt; 1.0 的點（n ≥ 10）||points with theoretical OD above 1.0 (n ≥ 10)}}</td><td>{{同一份 1 mL：先直接讀，再取 200 µL + 800 µL DI 水，vortex，讀，乘 5。兩個值都記。||from the same 1 mL: read it directly, then mix 200 µL + 800 µL DI water, vortex, read, multiply by 5. Record both.}}</td><td>{{8/23 的 TiO₂ 實驗裡 BioDrop 在 OD 1.2 以上不穩。裁判要先被檢查||in the 23 Aug TiO₂ run the BioDrop was unstable above OD 1.2. The referee has to be checked first}}</td></tr>
+    <tr><td><b>{{收尾空白||Closing blank}}</b></td><td>{{n = 50 之後||after n = 50}}</td><td>{{排空，DI 水沖三次，裝 50 mL DI 水循環 3 分鐘，四個估計器各 3 筆。||Drain, rinse three times with DI water, circulate 50 mL DI water for 3 min, 3 readings with each estimator.}}</td><td>{{頭尾空白的差就是這四個多小時裡的漂移加上微球殘留||the difference between opening and closing blank is the drift over the run plus bead carry-over}}</td></tr>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><h4>{{時間估計||Time budget}}</h4><p style="font-size:15.5px;margin:0">{{一般循環約 5 分鐘 × 40 = 3.3 小時；四估計器停靠點約 6.5 分鐘 × 10 = 1.1 小時；三次氣泡挑戰約 15 分鐘；前置與收尾約 45 分鐘。<b>合計約 5.5 小時。</b>兩個人分工（一人加樣與介面，一人 BioDrop 與紀錄）會順很多。||Ordinary cycles about 5 min × 40 = 3.3 h; four-estimator stops about 6.5 min × 10 = 1.1 h; three bubble challenges about 15 min; set-up and close about 45 min. <b>About 5.5 hours in total.</b> Two people make it far smoother: one doses and drives the interface, one runs the BioDrop and the log.}}</p></div>
+    <div class="card"><h4>{{紀錄表||Log sheet}}</h4><p style="font-size:15.5px;margin:0">{{<a href="data/sio2_assay_log_template.csv" download>下載 CSV 紀錄表</a>：51 列，已填好 C<sub>n</sub>、理論 OD、該點要不要稀釋、是不是四估計器停靠點或氣泡挑戰點。空欄是加樣時刻、BioDrop 直讀、BioDrop 稀釋後讀值與備註。||<a href="data/sio2_assay_log_template.csv" download>Download the CSV log sheet</a>: 51 rows with C<sub>n</sub>, theoretical OD, whether to dilute, and whether the point is a four-estimator stop or a bubble challenge already filled in. The blank columns are addition time, BioDrop direct reading, BioDrop diluted reading and remarks.}}</p></div>
+  </div>
+  <div class="grid3">
+    <div class="card"><h4>{{出現氣泡||Bubbles appear}}</h4><p style="margin:0;font-size:15px">{{輕彈管路或短暫加快流速趕走。那個循環重新等 3 分鐘，並在備註寫下。不要刪資料。||Tap the tubing or briefly raise the flow to clear them. Restart the 3 min wait for that cycle and note it. Do not delete data.}}</p></div>
+    <div class="card"><h4>{{加錯體積||Wrong volume added}}</h4><p style="margin:0;font-size:15px">{{照實寫下實際加了多少，繼續做。濃度是遞迴算的，事後可以用實際體積重算；不寫就救不回來。||Write down what was actually added and carry on. The concentration is recursive and can be recomputed from true volumes afterwards; unrecorded, it cannot.}}</p></div>
+    <div class="card"><h4>{{n = 5 差很多||n = 5 looks far off}}</h4><p style="margin:0;font-size:15px">{{BioDrop 在 n = 5 理論約 0.55。差超過 3 倍就停下來檢查：微球有沒有 vortex、管路有沒有氣泡、稀釋有沒有算錯。||The BioDrop should read about 0.55 at n = 5. If it is off by more than 3-fold, stop and check: was the stock vortexed, are there bubbles, is the dilution right.}}</p></div>
+  </div>
+</div></section>
+
+<!-- ======================================================== HYPOTHESES -->
+<section id="a-hyp" class="alt"><div class="wrap">
+  <p class="eyebrow">A3 · {{實驗前的預測||Predictions before the run}}</p>
+  <h2>{{八條假說，每一條都可能被今天的數據推翻||Eight hypotheses, each of which today's data could overturn}}</h2>
+  <p class="lead">{{寫於 2026-10-10 實驗開始前。門檻是事先定的；「結果」欄做完再填，不論對錯都保留。||Written on 10 Oct 2026 before the run. The thresholds are fixed in advance; the result column is filled in afterwards and kept whether right or wrong.}}</p>
+  <div class="fig"><h4>{{預測的三條曲線||The three predicted curves}}</h4>
+    <p class="sub">{{色帶是預測範圍，不是數據||bands are predicted ranges, not data}}</p>
+    <div class="legend"><span><i style="background:var(--ink3)"></i>{{單次散射理論（2.3 OD per mg/mL）||single-scattering theory (2.3 OD per mg/mL)}}</span><span><i style="background:var(--s1)"></i>{{BioDrop 直讀||BioDrop, direct}}</span><span><i style="background:var(--s2)"></i>{{inline 光度計（×5）||inline photometer (×5)}}</span></div>
+    <div class="figwrap"><svg id="hypfig" viewBox="0 0 900 320"></svg></div>
+    <p class="cap">{{BioDrop 的預測在低濃度貼著理論線，約 OD 1 以上開始往下彎（多重散射加上儀器上限）。Inline 的預測斜率比 BioDrop 低：它的 flow cell 只有 2 mm，偵測器離樣品近，會收進較多向前散射的光。||The BioDrop prediction follows theory at low concentration and bends below it from about OD 1 (multiple scattering plus the instrument's ceiling). The inline prediction has a lower slope than the BioDrop: its flow cell is only 2 mm and its detector sits close to the sample, so it collects more forward-scattered light.}}</p>
+  </div>
+  <div class="tw"><table class="hyp">
+    <tr><th>#</th><th>{{假說||Hypothesis}}</th><th>{{理由||Reasoning}}</th><th>{{怎麼核對||How to check}}</th><th>{{成立的門檻||Threshold to pass}}</th><th>{{結果||Result}}</th></tr>
+    <tr><td>H1</td><td>{{BioDrop 在低濃度與理論一致||The BioDrop agrees with theory at low concentration}}</td><td>{{1 µm、折射率 1.46 的微球，異常繞射近似給 2.3 OD per mg/mL||the anomalous diffraction approximation gives 2.3 OD per mg/mL for 1 µm beads of index 1.46}}</td><td>{{BioDrop 對 C<sub>n</sub>（已計入 v<sub>t</sub>），取 n = 1–8 的斜率||BioDrop against C<sub>n</sub> (hold-up included), slope over n = 1–8}}</td><td>{{斜率在 <b>1.8–2.8</b> OD·mL/mg||slope within <b>1.8–2.8</b> OD·mL/mg}}</td><td class="res"></td></tr>
+    <tr><td>H2</td><td>{{BioDrop 直讀在高濃度偏低；稀釋後的讀值才接近直線||Direct BioDrop readings fall low at high concentration; diluted readings stay near the line}}</td><td>{{多重散射；8/23 的 TiO₂ 實驗 BioDrop 在 1.2 以上不穩||multiple scattering; the BioDrop was unstable above 1.2 in the 23 Aug TiO₂ run}}</td><td>{{同一份樣品：直讀 vs 稀釋 5 倍 × 5||same sample: direct against 5-fold diluted × 5}}</td><td>{{理論 OD ≥ 2 的點，直讀比稀釋值<b>低 10% 以上</b>||at theoretical OD ≥ 2, direct is <b>more than 10% below</b> the diluted value}}</td><td class="res"></td></tr>
+    <tr><td>H3</td><td>{{Inline（×5）讀得比 BioDrop 低||Inline (×5) reads below the BioDrop}}</td><td>{{光程短、偵測器近，收進較多前向散射。1 µm 微球的前向散射比 8/23 的 TiO₂ 強，所以比值應低於那次的 1.02||short path and a near detector collect more forward scatter. 1 µm beads scatter forward more strongly than the TiO₂ of 23 Aug, so the ratio should fall below that run's 1.02}}</td><td>{{inline（<code>mad</code>）對 BioDrop（稀釋校正後），BioDrop &lt; 1.0 的範圍取斜率||inline (<code>mad</code>) against BioDrop (dilution-corrected), slope where BioDrop &lt; 1.0}}</td><td>{{斜率在 <b>0.6–1.0</b>||slope within <b>0.6–1.0</b>}}</td><td class="res"></td></tr>
+    <tr><td>H4</td><td>{{光纖版的斜率高於傾斜版，線性範圍也較寬||The fibre version has a higher slope than the tilted version and a wider linear range}}</td><td>{{光纖只接受小角度內的光，把更多散射光排除在外。<b>前提：光纖在偵測端。</b>若光纖在光源端，這條不適用||a fibre accepts light only within a small angle and so rejects more scattered light. <b>Assumes the fibre is on the detector side.</b> If it is on the source side this does not apply}}</td><td>{{兩台各自對 BioDrop 的斜率；各自偏離低段直線 5% 的濃度||each instrument's slope against the BioDrop; the concentration at which each departs 5% from its low-range line}}</td><td>{{光纖版斜率<b>較高</b>，且 5% 偏離點的濃度<b>不低於</b>傾斜版||fibre slope is <b>higher</b>, and its 5% departure point is at a concentration <b>no lower</b> than the tilted version's}}</td><td class="res"></td></tr>
+    <tr><td>H5</td><td>{{乾淨循環下，四個估計器給同一個 OD||In clean circulation the four estimators give one and the same OD}}</td><td>{{沒有離群值時，四者都接近平均值；<code>upper</code> 的固定偏移被它自己的空白抵消||with no outliers all four approach the mean; the fixed offset of <code>upper</code> is cancelled by its own blank}}</td><td>{{11 個停靠點，各估計器用自己的空白重算 OD，對 <code>mad</code> 取差||at the 11 stops, OD recomputed with each estimator's own blank, difference from <code>mad</code>}}</td><td>{{<code>qn</code>、<code>biweight</code> 與 <code>mad</code> 的差 <b>|Δ| ≤ 0.01</b>；<code>upper</code> <b>|Δ| ≤ 0.02</b>||<code>qn</code> and <code>biweight</code> within <b>|Δ| ≤ 0.01</b> of <code>mad</code>; <code>upper</code> within <b>|Δ| ≤ 0.02</b>}}</td><td class="res"></td></tr>
+    <tr><td>H6</td><td>{{有氣泡時，<code>upper</code> 的離散明顯小於另外三個||With bubbles, <code>upper</code> scatters far less than the other three}}</td><td>{{氣泡只讓光變暗；<code>upper</code> 只用亮的那一半。模擬：35% 樣本被遮時，誤差超過 0.05 OD 的讀值是 18% 對 7.5%||bubbles only darken; <code>upper</code> uses only the brighter half. Simulation: with 35% of samples hit, readings off by more than 0.05 OD are 18% against 7.5%}}</td><td>{{三次氣泡挑戰，每個估計器 10 筆的 SD||SD of the 10 readings per estimator in the three bubble challenges}}</td><td>{{三次中至少兩次 SD(<code>upper</code>) <b>≤ ½</b> × SD(<code>mad</code>)||SD(<code>upper</code>) <b>≤ ½</b> × SD(<code>mad</code>) in at least two of the three}}</td><td class="res"></td></tr>
+    <tr><td>H7</td><td>{{有氣泡時，<code>mad</code>、<code>qn</code>、<code>biweight</code> 彼此仍然分不出來||With bubbles, <code>mad</code>, <code>qn</code> and <code>biweight</code> still cannot be told apart}}</td><td>{{三者用同一個中位數當中心，14 個樣本下門檻寬度的差別不改變誰被留下||all three centre on the same median, and with 14 samples the difference in gate width does not change which samples survive}}</td><td>{{同上的 SD 與平均||SD and mean from the same challenges}}</td><td>{{三者的 SD 互相在 <b>2 倍以內</b>，平均差 <b>≤ 0.05</b>||their SDs within a <b>factor of 2</b> of each other, means within <b>0.05</b>}}</td><td class="res"></td></tr>
+    <tr><td>H8</td><td>{{9/19 的「曲線向上彎」主要不是光度計造成的||The upward bend seen on 19 Sept was mostly not caused by the photometer}}</td><td>{{那次沒有 BioDrop 逐點配對，也沒計入管路體積。管路體積會造成向上彎，但 8 mL 只讓後段對前段的斜率比變成 1.07，當時是 1.20||that run had no point-by-point BioDrop and ignored hold-up. Hold-up does bend the curve upward, yet 8 mL raises the late-to-early slope ratio only to 1.07, against the 1.20 seen}}</td><td>{{畫兩張圖：inline 對 C<sub>n</sub>、inline 對 BioDrop（稀釋校正後），各取 n = 1–12 與 n = 25–36 的斜率比||two plots: inline against C<sub>n</sub> and inline against BioDrop (dilution-corrected); ratio of the slope over n = 25–36 to that over n = 1–12 in each}}</td><td>{{inline 對 BioDrop 的斜率比在 <b>0.95–1.05</b>（直線）||slope ratio for inline against BioDrop within <b>0.95–1.05</b> (straight)}}</td><td class="res"></td></tr>
+  </table></div>
+  <h3>{{H8 怎麼讀||Reading H8}}</h3>
+  <div class="tw"><table>
+    <tr><th></th><th>{{inline 對 BioDrop：直線||inline against BioDrop: straight}}</th><th>{{inline 對 BioDrop：向上彎||inline against BioDrop: bends upward}}</th></tr>
+    <tr><th>{{inline 對 C<sub>n</sub>：直線||inline against C<sub>n</sub>: straight}}</th><td>{{一切正常；9/19 是那次特有的問題||all is well; 19 Sept was specific to that run}}</td><td>{{BioDrop 在高濃度讀低（對照 H2）||the BioDrop reads low at high concentration (see H2)}}</td></tr>
+    <tr><th>{{inline 對 C<sub>n</sub>：向上彎||inline against C<sub>n</sub>: bends upward}}</th><td>{{<b>濃度算錯了</b>（管路體積、加樣誤差累積、沉降），光度計沒問題||<b>the concentration is wrong</b> (hold-up, accumulated pipetting error, settling); the photometer is fine}}</td><td>{{<b>光度計本身超線性</b>，要查暗場或漏光||<b>the photometer itself is super-linear</b>; look at the dark level or stray light}}</td></tr>
+  </table></div>
+  <div class="note">{{<b>BioDrop 是裁判，但不是真值。</b>它也是一台會受幾何與多重散射影響的儀器。濃度的依據是加進去的體積；BioDrop 的角色是提供一台獨立儀器、同一份液體的逐點比較。H1 和 H2 就是在檢查裁判。||<b>The BioDrop is the referee, not the truth.</b> It too is an instrument subject to geometry and multiple scattering. Concentration rests on the volumes added; the BioDrop's role is a point-by-point comparison from an independent instrument on the same liquid. H1 and H2 are checks on the referee.}}</div>
+</div></section>
+
+<!-- ======================================================== AFTER -->
+<section id="a-after"><div class="wrap">
+  <p class="eyebrow">A4 · {{做完之後||After the run}}</p>
+  <h2>{{帶回來的檔案，與它們會變成的圖||The files to bring back, and the figures they become}}</h2>
+  <div class="tw"><table>
+    <tr><th>{{檔案||File}}</th><th>{{來源||From}}</th><th>{{用途||Used for}}</th></tr>
+    <tr><td>{{兩台的 <code>record_*.csv</code>||<code>record_*.csv</code> from both}}</td><td>{{介面「板子上的錄製檔」||"recordings on the board" in the interface}}</td><td>{{<code>lux_sample</code>、<code>lux_ref</code>、<code>alg_profile</code>、時間戳。所有 OD 由這裡重算||<code>lux_sample</code>, <code>lux_ref</code>, <code>alg_profile</code>, timestamps. Every OD is recomputed from these}}</td></tr>
+    <tr><td>{{紀錄表（CSV 或拍照）||the log sheet (CSV or photo)}}</td><td>{{今天手填||filled in by hand today}}</td><td>{{每個 n 的加樣時刻、BioDrop 直讀與稀釋讀值、備註||addition time for every n, BioDrop direct and diluted readings, remarks}}</td></tr>
+    <tr><td>v<sub>t</sub></td><td>{{開始前量的||measured before starting}}</td><td>{{修正 C<sub>n</sub>||corrects C<sub>n</sub>}}</td></tr>
+    <tr><td>{{兩台光度計在管路上的照片||photos of both photometers on the loop}}</td><td>{{手機||phone}}</td><td>{{位置與間距；H4 需要知道光纖在哪一端||position and spacing; H4 needs to know which end the fibre is on}}</td></tr>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><h4>{{會做出的五張圖||The five figures}}</h4><ol style="margin:0;font-size:15.5px;padding-left:20px">
+      <li>{{三台儀器對 C<sub>n</sub> 的校正曲線與殘差（H1、H3、H4）||calibration curves and residuals of all three against C<sub>n</sub> (H1, H3, H4)}}</li>
+      <li>{{BioDrop 直讀對稀釋後讀值（H2）||BioDrop direct against diluted (H2)}}</li>
+      <li>{{inline 對 BioDrop 的逐點配對與 Bland–Altman（H3、H8）||inline against BioDrop, paired, with Bland–Altman (H3, H8)}}</li>
+      <li>{{四估計器在 11 個停靠點的差（H5）||differences between the four estimators at the 11 stops (H5)}}</li>
+      <li>{{氣泡挑戰：四估計器的散布（H6、H7）||bubble challenges: scatter of the four estimators (H6, H7)}}</li></ol></div>
+    <div class="card"><h4>{{這個設計量不到的事||What this design cannot measure}}</h4><p style="font-size:15.5px;margin:0">{{今天每個估計器看到的是<b>不同的 burst</b>（輪流切換），不是同一批樣本。所以四者的比較帶有 burst 之間的隨機差異，要靠每站 3 筆、共 11 站來平均。要做到「同一批樣本、四種算法」，需要韌體把 burst 內的個別樣本存下來（目前 <code>OD_VERBOSE_LOG</code> 是 0）。如果今天來得及開，重播腳本可以直接用。||Today each estimator sees a <b>different burst</b> (they take turns), not the same samples. The comparison therefore carries burst-to-burst randomness, averaged down by 3 readings at each of 11 stops. Comparing four algorithms on identical samples needs the firmware to store the individual samples inside a burst (<code>OD_VERBOSE_LOG</code> is currently 0). If that can be switched on today, the replay script will use it directly.}}</p></div>
+  </div>
+</div></section>

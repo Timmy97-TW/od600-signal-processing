@@ -14,6 +14,7 @@ refs = (root / "src" / "references.html").read_text(encoding="utf-8")
 data = (root / "data" / "site_data.json").read_text(encoding="utf-8")
 
 src = src.replace("<!--REFS-->", refs)
+src = src.replace("<!--ASSAY-->", (root / "src" / "assay.src.html").read_text(encoding="utf-8"))
 html = re.sub(r"\{\{(.*?)\|\|(.*?)\}\}",
               lambda m: f'<span class="zh">{m.group(1)}</span><span class="en">{m.group(2)}</span>',
               src, flags=re.S)

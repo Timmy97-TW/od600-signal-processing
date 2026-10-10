@@ -13,6 +13,8 @@ photometer, and a four-day protocol that measures those biases with 1 µm silica
 | `data/site_data.json` | Data behind the real-data figures: the 434 h run (down-sampled), reference-count histogram, the 19 Sept 2026 silica titration. |
 | `analysis/firmware_estimators.py` | Line-for-line ports of the four OD estimators in firmware v3.10.9 (`mad`, `qn`, `biweight`, `upper`); run it to print their behaviour. |
 | `analysis/replay_algorithms.py` | Replays one raw data set through eleven reduction algorithms (those four plus seven controls and candidates). `--selftest` runs on synthetic data. |
+| `src/assay.src.html`, `assay.js` | The **SiO₂ Assay** tab (`#assay`): the four firmware estimators explained, SOP v1.1 as a visual procedure, and eight predictions written before the 10 Oct 2026 run. |
+| `data/sio2_assay_log_template.csv` | Log sheet for the 51 points of SOP v1.1. |
 | `PREREGISTRATION.md` | Algorithm list, metrics and decision rule, to be frozen before data collection. |
 
 ## What is established and what is not

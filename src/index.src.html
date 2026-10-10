@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant" data-lang="zh">
+<html lang="zh-Hant" data-lang="zh" data-view="main">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -89,13 +89,29 @@ ul{padding-left:22px;margin:0 0 16px} li{margin:4px 0}
 .figwrap svg{min-width:620px}
 footer{padding:40px 20px 70px;font-size:13px;color:var(--ink3);text-align:center}
 .refs li{font-size:14.5px;margin:8px 0;color:var(--ink2)}
+html[data-view=main] #view-assay,html[data-view=assay] #view-main,html[data-view=main] .links[data-for=assay],html[data-view=assay] .links[data-for=main]{display:none}
+.lang.view button{font-weight:600}
+.seg{display:inline-flex;background:var(--soft);border-radius:980px;padding:2px;flex-wrap:wrap}
+section.alt .seg{background:#e8e8ed}
+.seg button{border:0;background:transparent;font:inherit;font-size:13.5px;padding:5px 14px;border-radius:980px;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.btn{border:0;background:var(--accent);color:#fff;font:inherit;font-size:13.5px;padding:6px 16px;border-radius:980px;cursor:pointer}
+.cyc{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:16px 0}
+.cyc>div{background:var(--soft);border-radius:var(--r);padding:18px;position:relative}
+.cyc>div>b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;margin-bottom:10px}
+.cyc p{font-size:14.5px;margin:0 0 10px;line-height:1.5}.cyc span{font-size:12.5px;color:var(--ink3);font-weight:600}
+table.hyp td{font-size:14px}table.hyp td.res{min-width:110px;background:repeating-linear-gradient(135deg,#fafafa,#fafafa 6px,#f2f2f4 6px,#f2f2f4 12px)}
+#e_tab td.c{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 @media (max-width:600px){section{padding:60px 16px}.hero{padding:64px 16px 40px}.lead{font-size:18px}.tile .n{font-size:32px}nav .brand{display:none}}
 </style>
 </head>
 <body>
 <nav><div class="in">
   <span class="brand">ReLeaf · OD600</span>
-  <div class="links">
+  <div class="lang view" role="group" aria-label="Page">
+    <button id="vmain" aria-pressed="true">{{總覽||Overview}}</button><button id="vassay" aria-pressed="false">SiO₂ Assay</button>
+  </div>
+  <div class="links" data-for="main">
     <a href="#basics">{{從零開始||From zero}}</a>
     <a href="#chain">{{訊號鏈||Signal chain}}</a>
     <a href="#bias">{{偏差來源||Bias}}</a>
@@ -107,10 +123,19 @@ footer{padding:40px 20px 70px;font-size:13px;color:var(--ink3);text-align:center
     <a href="#wiki">Wiki</a>
     <a href="#refs">{{文獻||References}}</a>
   </div>
+  <div class="links" data-for="assay">
+    <a href="#a-est">{{四個估計器||Four estimators}}</a>
+    <a href="#a-setup">{{實驗流程||Procedure}}</a>
+    <a href="#a-hyp">{{預測||Predictions}}</a>
+    <a href="#a-after">{{做完之後||After the run}}</a>
+  </div>
   <div class="lang" role="group" aria-label="Language">
     <button id="bzh" aria-pressed="true">中文</button><button id="ben" aria-pressed="false">EN</button>
   </div>
 </div></nav>
+
+<div id="view-main">
+
 
 <header class="hero"><div class="wrap">
   <p class="eyebrow">{{Measurement · 訊號處理研究||Measurement · a signal-processing study}}</p>
@@ -471,12 +496,17 @@ footer{padding:40px 20px 70px;font-size:13px;color:var(--ink3);text-align:center
   <!--REFS-->
 </div></section>
 
+</div>
+<div id="view-assay">
+<!--ASSAY-->
+</div>
 <footer>
   <p>ReLeaf · GEMS-Taiwan iGEM 2026 · {{建置於 2026-10-10||Built 2026-10-10}}<br>
   {{互動圖中的模擬使用固定亂數種子；公式與實際資料的計算腳本在 repo 的 <code>analysis/</code>。||Simulations in the interactive figures use a fixed random seed; scripts for the formulas and the real data are in <code>analysis/</code> in the repository.}}</p>
 </footer>
 <div class="tip" id="tip"></div>
 <script>window.DATA=/*SITE_DATA*/null;</script>
+<script src="assay.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

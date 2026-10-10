@@ -289,6 +289,7 @@
     $("ladder").innerHTML = html;
   }
 
+  window.OD600 = { plot, el, rng, gauss, median, mean, sd, readout, L, C, fmt, tip, $, K };
   function drawAll() { beam(); chain(); qfig(); jfig(); ofig(); mfig(); sfig(); efig(); hfig(); zfig(); sio2fig(); settle(); ladder(); }
   [["b_od", beam], ["b_i0", beam], ["q_n", qfig], ["j_s", jfig], ["o_f", ofig], ["o_k", ofig], ["m_s", mfig], ["e_t", efig], ["st_d", settle]].forEach((p) => $(p[0]).addEventListener("input", p[1]));
 
@@ -296,8 +297,18 @@
     document.documentElement.dataset.lang = l; document.documentElement.lang = l === "zh" ? "zh-Hant" : "en";
     $("bzh").setAttribute("aria-pressed", l === "zh"); $("ben").setAttribute("aria-pressed", l === "en");
     try { localStorage.setItem("od600lang", l); } catch (e) { /* storage may be blocked */ }
-    drawAll();
+    drawAll(); if (window.drawAssay) window.drawAssay();
   }
+  function setView(v, keepScroll) {
+    document.documentElement.dataset.view = v;
+    $("vmain").setAttribute("aria-pressed", v === "main"); $("vassay").setAttribute("aria-pressed", v === "assay");
+    if (!keepScroll) window.scrollTo(0, 0);
+  }
+  const viewOf = (h) => (h === "#assay" || h.indexOf("#a-") === 0 ? "assay" : "main");
+  $("vmain").addEventListener("click", () => { history.replaceState(null, "", "#"); setView("main"); });
+  $("vassay").addEventListener("click", () => { history.replaceState(null, "", "#assay"); setView("assay"); });
+  window.addEventListener("hashchange", () => setView(viewOf(location.hash), location.hash.length > 1 && location.hash !== "#assay"));
+  setView(viewOf(location.hash), true);
   $("bzh").addEventListener("click", () => setLang("zh")); $("ben").addEventListener("click", () => setLang("en"));
   let saved = null; try { saved = localStorage.getItem("od600lang"); } catch (e) { /* ignore */ }
   setLang(saved === "en" ? "en" : "zh");
