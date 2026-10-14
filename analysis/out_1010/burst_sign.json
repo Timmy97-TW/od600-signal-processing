@@ -1,0 +1,29 @@
+{
+ "V2 bubble test": {
+  "bursts": 23,
+  "samples": 322,
+  "brighter_3pct": 0.2204968944099379,
+  "darker_3pct": 0.6149068322981367,
+  "bursts_mostly_brighter": 0.21739130434782608,
+  "max_rel": 1.1525054466230937,
+  "min_rel": 0.6579520697167756
+ },
+ "V1 main run, flagged bursts": {
+  "bursts": 25,
+  "samples": 350,
+  "brighter_3pct": 0.38,
+  "darker_3pct": 0.5314285714285715,
+  "bursts_mostly_brighter": 0.4,
+  "max_rel": 2.7587017873941675,
+  "min_rel": 0.0997920997920998
+ },
+ "V2 main run, flagged bursts": {
+  "bursts": 11,
+  "samples": 154,
+  "brighter_3pct": 0.012987012987012988,
+  "darker_3pct": 0.8636363636363636,
+  "bursts_mostly_brighter": 0.0,
+  "max_rel": 1.0609452736318408,
+  "min_rel": 0.5099750623441397
+ }
+}

@@ -15,9 +15,11 @@ data = (root / "data" / "site_data.json").read_text(encoding="utf-8")
 
 src = src.replace("<!--REFS-->", refs)
 src = src.replace("<!--ASSAY-->", (root / "src" / "assay.src.html").read_text(encoding="utf-8"))
+src = src.replace("<!--RESULTS-->", (root / "src" / "results.src.html").read_text(encoding="utf-8"))
 html = re.sub(r"\{\{(.*?)\|\|(.*?)\}\}",
               lambda m: f'<span class="zh">{m.group(1)}</span><span class="en">{m.group(2)}</span>',
               src, flags=re.S)
 html = html.replace("/*SITE_DATA*/null", data)
+html = html.replace("/*RES_DATA*/null", (root / "data" / "results_1010.json").read_text(encoding="utf-8"))
 (root / "index.html").write_text(html, encoding="utf-8")
 print("index.html", len(html) // 1024, "KB,", html.count('class="zh"'), "bilingual strings")

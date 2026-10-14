@@ -53,7 +53,7 @@
     el("line", { x1: b.x, x2: b.x + b.w, y1: b.y + b.h, y2: b.y + b.h, stroke: C.ink3, "stroke-width": 1 }, g);
     if (o.xlab) el("text", { x: b.x + b.w / 2, y: b.y + b.h + 40, "text-anchor": "middle", "font-size": 13, fill: C.ink2 }, g, o.xlab);
     if (o.ylab) el("text", { x: b.x - 46, y: b.y + b.h / 2, "text-anchor": "middle", "font-size": 13, fill: C.ink2, transform: `rotate(-90 ${b.x - 46} ${b.y + b.h / 2})` }, g, o.ylab);
-    const clipId = svg.id + "c" + (keep ? "2" : "1");
+    const clipId = svg.id + "c" + (keep ? svg.querySelectorAll("clipPath").length + 1 : 1);
     const cp = el("clipPath", { id: clipId }, g); el("rect", { x: b.x, y: b.y - 4, width: b.w, height: b.h + 8 }, cp);
     const pg = el("g", { "clip-path": `url(#${clipId})` }, g);
     (o.series || []).forEach((s) => {
@@ -297,17 +297,18 @@
     document.documentElement.dataset.lang = l; document.documentElement.lang = l === "zh" ? "zh-Hant" : "en";
     $("bzh").setAttribute("aria-pressed", l === "zh"); $("ben").setAttribute("aria-pressed", l === "en");
     try { localStorage.setItem("od600lang", l); } catch (e) { /* storage may be blocked */ }
-    drawAll(); if (window.drawAssay) window.drawAssay();
+    drawAll(); if (window.drawAssay) window.drawAssay(); if (window.drawResults) window.drawResults();
   }
   function setView(v, keepScroll) {
     document.documentElement.dataset.view = v;
-    $("vmain").setAttribute("aria-pressed", v === "main"); $("vassay").setAttribute("aria-pressed", v === "assay");
+    $("vmain").setAttribute("aria-pressed", v === "main"); $("vassay").setAttribute("aria-pressed", v === "assay"); $("vresults").setAttribute("aria-pressed", v === "results");
     if (!keepScroll) window.scrollTo(0, 0);
   }
-  const viewOf = (h) => (h === "#assay" || h.indexOf("#a-") === 0 ? "assay" : "main");
+  const viewOf = (h) => (h === "#results" || h.indexOf("#r-") === 0 ? "results" : h === "#assay" || h.indexOf("#a-") === 0 ? "assay" : "main");
   $("vmain").addEventListener("click", () => { history.replaceState(null, "", "#"); setView("main"); });
   $("vassay").addEventListener("click", () => { history.replaceState(null, "", "#assay"); setView("assay"); });
-  window.addEventListener("hashchange", () => setView(viewOf(location.hash), location.hash.length > 1 && location.hash !== "#assay"));
+  $("vresults").addEventListener("click", () => { history.replaceState(null, "", "#results"); setView("results"); });
+  window.addEventListener("hashchange", () => setView(viewOf(location.hash), location.hash.length > 1 && location.hash !== "#assay" && location.hash !== "#results"));
   setView(viewOf(location.hash), true);
   $("bzh").addEventListener("click", () => setLang("zh")); $("ben").addEventListener("click", () => setLang("en"));
   let saved = null; try { saved = localStorage.getItem("od600lang"); } catch (e) { /* ignore */ }

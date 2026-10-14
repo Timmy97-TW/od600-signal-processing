@@ -15,6 +15,9 @@ photometer, and a four-day protocol that measures those biases with 1 µm silica
 | `analysis/replay_algorithms.py` | Replays one raw data set through eleven reduction algorithms (those four plus seven controls and candidates). `--selftest` runs on synthetic data. |
 | `src/assay.src.html`, `assay.js` | The **SiO₂ Assay** tab (`#assay`): the four firmware estimators explained, SOP v1.1 as a visual procedure, and eight predictions written before the 10 Oct 2026 run. |
 | `data/sio2_assay_log_template.csv` | Log sheet for the 51 points of SOP v1.1. |
+| `src/results.src.html`, `results.js` | The **10/10 Results** tab (`#results`): what ran, clean-flow agreement, bubbles, gates, reference channel, calibration, scorecard for H1–H8, and the recommended configuration for the next bioreactor run. |
+| `data/20261010/` | The 10 Oct 2026 run as delivered: both units' processed CSVs and raw bursts, both bubble tests, and the hand-written log (`manual_record.xlsx`). V1's bubble-test raw file was a copy of the processed CSV and is omitted. |
+| `analysis/sio2_1010_*.py` | Analysis of that run. Order: `plateaus` → `calibration` → `bubbles` → `pipeline` → `burst_sign` → `export` (writes `data/results_1010.json`, which `build.py` inlines). Needs pandas, scipy, openpyxl. |
 | `PREREGISTRATION.md` | Algorithm list, metrics and decision rule, to be frozen before data collection. |
 
 ## What is established and what is not

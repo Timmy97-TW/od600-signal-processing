@@ -89,7 +89,8 @@ ul{padding-left:22px;margin:0 0 16px} li{margin:4px 0}
 .figwrap svg{min-width:620px}
 footer{padding:40px 20px 70px;font-size:13px;color:var(--ink3);text-align:center}
 .refs li{font-size:14.5px;margin:8px 0;color:var(--ink2)}
-html[data-view=main] #view-assay,html[data-view=assay] #view-main,html[data-view=main] .links[data-for=assay],html[data-view=assay] .links[data-for=main]{display:none}
+html:not([data-view=main]) #view-main,html:not([data-view=assay]) #view-assay,html:not([data-view=results]) #view-results,html:not([data-view=main]) .links[data-for=main],html:not([data-view=assay]) .links[data-for=assay],html:not([data-view=results]) .links[data-for=results]{display:none}
+table.hyp td.res.done{background:#fff}
 .lang.view button{font-weight:600}
 .seg{display:inline-flex;background:var(--soft);border-radius:980px;padding:2px;flex-wrap:wrap}
 section.alt .seg{background:#e8e8ed}
@@ -109,7 +110,7 @@ table.hyp td{font-size:14px}table.hyp td.res{min-width:110px;background:repeatin
 <nav><div class="in">
   <span class="brand">ReLeaf · OD600</span>
   <div class="lang view" role="group" aria-label="Page">
-    <button id="vmain" aria-pressed="true">{{總覽||Overview}}</button><button id="vassay" aria-pressed="false">SiO₂ Assay</button>
+    <button id="vmain" aria-pressed="true">{{總覽||Overview}}</button><button id="vassay" aria-pressed="false">SiO₂ Assay</button><button id="vresults" aria-pressed="false">{{10/10 結果||10/10 Results}}</button>
   </div>
   <div class="links" data-for="main">
     <a href="#basics">{{從零開始||From zero}}</a>
@@ -128,6 +129,16 @@ table.hyp td{font-size:14px}table.hyp td.res{min-width:110px;background:repeatin
     <a href="#a-setup">{{實驗流程||Procedure}}</a>
     <a href="#a-hyp">{{預測||Predictions}}</a>
     <a href="#a-after">{{做完之後||After the run}}</a>
+  </div>
+  <div class="links" data-for="results">
+    <a href="#r-run">{{實際流程||What ran}}</a>
+    <a href="#r-clean">{{乾淨循環||Clean flow}}</a>
+    <a href="#r-bubble">{{氣泡||Bubbles}}</a>
+    <a href="#r-gate">{{閘門||Gates}}</a>
+    <a href="#r-ref">{{參考通道||Reference}}</a>
+    <a href="#r-cal">{{校正||Calibration}}</a>
+    <a href="#r-score">{{對答案||Scorecard}}</a>
+    <a href="#r-next">{{下一輪建議||Next run}}</a>
   </div>
   <div class="lang" role="group" aria-label="Language">
     <button id="bzh" aria-pressed="true">中文</button><button id="ben" aria-pressed="false">EN</button>
@@ -500,13 +511,18 @@ table.hyp td{font-size:14px}table.hyp td.res{min-width:110px;background:repeatin
 <div id="view-assay">
 <!--ASSAY-->
 </div>
+<div id="view-results">
+<!--RESULTS-->
+</div>
 <footer>
-  <p>ReLeaf · GEMS-Taiwan iGEM 2026 · {{建置於 2026-10-10||Built 2026-10-10}}<br>
+  <p>ReLeaf · GEMS-Taiwan iGEM 2026 · {{建置於 2026-10-10，10/10 結果更新於 2026-10-14||Built 2026-10-10; 10/10 results added 2026-10-14}}<br>
   {{互動圖中的模擬使用固定亂數種子；公式與實際資料的計算腳本在 repo 的 <code>analysis/</code>。||Simulations in the interactive figures use a fixed random seed; scripts for the formulas and the real data are in <code>analysis/</code> in the repository.}}</p>
 </footer>
 <div class="tip" id="tip"></div>
 <script>window.DATA=/*SITE_DATA*/null;</script>
+<script>window.RES=/*RES_DATA*/null;</script>
 <script src="assay.js"></script>
+<script src="results.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,149 @@
+<header class="hero"><div class="wrap">
+  <p class="eyebrow">{{10/10 結果 · SiO₂ 校正與氣泡測試||10 Oct results · SiO₂ calibration and bubble test}}</p>
+  <h1>{{估計器不是重點，<br>閘門才是||The estimator is not the lever.<br>The gate is.}}</h1>
+  <p class="lead">{{兩台光度計串在同一條管路上，讀同一份 1 µm SiO₂ 懸浮液 4.5 小時，41 個濃度點，每 5 秒一筆，8 個估計器每一筆都記下來。乾淨循環時 8 個估計器的差不到 0.004 OD；有氣泡時沒有一個估計器救得回來。真正有效的是在估計器之後加的兩道閘門。||Two photometers in series read the same 1 µm silica suspension for 4.5 h: 41 concentrations, one reading every 5 s, all eight estimators logged on every reading. In clean flow the eight differ by less than 0.004 OD. With bubbles none of them rescues the reading. What works is two gates placed after the estimator.}}</p>
+  <div class="tiles">
+    <div class="tile"><div class="n">0.004</div><div class="l">{{OD，乾淨循環下 8 個估計器之間的最大差（40 個濃度點）||OD, largest gap between the eight estimators in clean flow (40 concentrations)}}</div></div>
+    <div class="tile"><div class="n">1.0–1.7</div><div class="l">{{OD，V1 氣泡讀值的 RMSE，不論用哪個估計器||OD, RMSE of V1 bubble readings, whichever estimator is used}}</div></div>
+    <div class="tile"><div class="n">0%</div><div class="l">{{氣柱（flow cell 裡整段是空氣）被韌體旗標抓到的比例||of air slugs (flow cell full of air) caught by the firmware flag}}</div></div>
+    <div class="tile"><div class="n">0.016</div><div class="l">{{OD，加上兩道閘門後，整個氣泡測試的最大誤差（V1，原本 2.44）||OD, largest error over the whole bubble test with both gates (V1; 2.44 without)}}</div></div>
+  </div>
+</div></header>
+
+<!-- ======================================================== WHAT RAN -->
+<section id="r-run" class="alt"><div class="wrap">
+  <p class="eyebrow">R1 · {{實際做了什麼||What was actually run}}</p>
+  <h2>{{和計畫不一樣的地方，先講清楚||Where the run differed from the plan}}</h2>
+  <div class="tw"><table>
+    <tr><th>{{項目||Item}}</th><th>{{SOP v1.1 計畫||SOP v1.1 plan}}</th><th>{{10/10 實際||10 Oct actual}}</th><th>{{影響||Consequence}}</th></tr>
+    <tr><td>{{濃度點||Concentrations}}</td><td>n = 0–50</td><td>n = 0–40{{（每步 2.5 mg，累計 100 mg）||(2.5 mg per step, 100 mg in total)}}</td><td>{{足夠；V1 讀到 3.17，BioDrop（稀釋校正）約 3.6||enough: V1 reached 3.17, BioDrop (dilution-corrected) about 3.6}}</td></tr>
+    <tr><td>{{韌體||Firmware}}</td><td>v3.10.9{{，4 個估計器輪流切換||, four estimators switched in turn}}</td><td><code>photometer-fw/py v1.2.0</code>{{，5 秒一筆，8 個估計器同時記錄，另存原始 burst||, one reading per 5 s, eight estimators logged together, raw bursts saved}}</td><td>{{比計畫好：每個估計器都看到完全相同的樣本，不用輪流||better than planned: every estimator saw identical samples, no rotation needed}}</td></tr>
+    <tr><td>{{介面顯示的估計器||Estimator shown in the UI}}</td><td><code>mad</code></td><td><b><code>upper</code></b></td><td>{{手抄的 V1、V2 與 CSV 的 <code>od_upper</code> 一致（中位差 0.0000），與 <code>mad</code> 差 0.0005。手抄值是 <code>upper</code>，不是 <code>mad</code>||the hand-copied V1/V2 values match <code>od_upper</code> in the CSV (median gap 0.0000) and differ from <code>mad</code> by 0.0005. The manual values are <code>upper</code>, not <code>mad</code>}}</td></tr>
+    <tr><td>{{氣泡挑戰||Bubble challenge}}</td><td>{{n = 10、25、40 各一次||once each at n = 10, 25, 40}}</td><td>{{n = 40 之後一次，約 11 分鐘||once after n = 40, about 11 min}}</td><td>{{H6、H7 只有 2 次（兩台各一次）可判||H6 and H7 rest on two challenges (one per unit), not three}}</td></tr>
+    <tr><td>{{管路體積 v<sub>t</sub>||Hold-up v<sub>t</sub>}}</td><td>{{開始前量||measured before start}}</td><td>{{50 mL（事後確認）||50 mL (confirmed afterwards)}}</td><td>{{C<sub>n</sub> 依 V = 50 mL 計算||C<sub>n</sub> computed with V = 50 mL}}</td></tr>
+    <tr><td>{{V1 氣泡測試原始 burst||V1 bubble-test raw bursts}}</td><td>—</td><td>{{<code>Complete version bubble test raw data.csv</code> 和處理後的檔案逐位元組相同||<code>Complete version bubble test raw data.csv</code> is byte-identical to the processed file}}</td><td>{{V1 的 burst 內部分析改用主實驗裡被標記的 burst||V1 burst-level analysis uses the flagged bursts of the main run instead}}</td></tr>
+    <tr><td>{{11:08–11:22 UTC（19:08–19:22）||11:08–11:22 UTC (19:08–19:22 local)}}</td><td>—</td><td>{{紀錄表沒有寫，但兩台都出現空氣通過的特徵，V1 有 6 分鐘停在 0.79||not in the log, but both units show air passing; V1 sat at 0.79 for 6 min}}</td><td>{{從平台統計中排除；當作第三次（非刻意的）氣柱事件分析||excluded from the plateau statistics; analysed as a third, unplanned air event}}</td></tr>
+  </table></div>
+  <p class="cap">{{所有數字都從兩台的 CSV 重算；分析程式在 <code>analysis/sio2_1010_*.py</code>，依序執行即可重現。原始 burst 用「丟前 2 個樣本、扣暗場、每通道各自估計、再相除」可以重現 CSV 裡的 8 個 OD，最大差 0.005 OD。||Every number is recomputed from the two CSVs; the scripts are <code>analysis/sio2_1010_*.py</code>, run in order. Dropping the first two samples, subtracting the dark level, estimating each channel and then taking the ratio reproduces all eight logged OD columns from the raw bursts to within 0.005 OD.}}</p>
+</div></section>
+
+<!-- ======================================================== CLEAN -->
+<section id="r-clean"><div class="wrap">
+  <p class="eyebrow">R2 · {{乾淨循環||Clean flow}}</p>
+  <h2>{{沒有干擾時，8 個估計器是同一個數||Without a disturbance, the eight estimators give one number}}</h2>
+  <div class="fig"><h4>{{每個濃度點：各估計器減去 <code>mad</code>（各自用自己的空白）||Each concentration: every estimator minus <code>mad</code> (each with its own blank)}}</h4>
+    <p class="sub">{{藍＝對稱型（qn、biweight、mean、median）；橘＝單側型（upper、p75、p90）。每點是一個平台的中位數||blue = symmetric (qn, biweight, mean, median); orange = one-sided (upper, p75, p90). Each point is one plateau median}}</p>
+    <div class="figwrap"><svg id="rfig_clean" viewBox="0 0 900 300"></svg></div>
+    <p class="cap">{{V1 最大差 0.0039 OD（<code>p90</code>），V2 最大差 0.0018 OD。8/23 TiO₂ 校正的殘差 SD 是 0.024，所以估計器的選擇在乾淨時連雜訊的五分之一都不到。||Largest gap 0.0039 OD on V1 (<code>p90</code>) and 0.0018 OD on V2. The residual SD of the 23 Aug TiO₂ calibration was 0.024, so in clean flow the choice of estimator is worth less than a fifth of the noise.}}</p>
+  </div>
+  <div class="tw"><table id="r_noise"></table></div>
+  <p class="cap">{{單筆讀值的短期雜訊（相鄰兩筆差 ÷ √2，去掉了漂移），40 個平台取中位數。V2 上 <code>mad</code>、<code>qn</code>、<code>biweight</code> 比 <code>mean</code>、<code>median</code>、百分位數低約 30%，因為 V2 的 burst 裡偶爾有單一離群樣本。||Short-term noise of a single reading (difference of neighbours ÷ √2, drift removed), median over 40 plateaus. On V2, <code>mad</code>, <code>qn</code> and <code>biweight</code> are about 30% quieter than <code>mean</code>, <code>median</code> and the percentiles, because V2 bursts occasionally carry a single outlying sample.}}</p>
+</div></section>
+
+<!-- ======================================================== BUBBLES -->
+<section id="r-bubble" class="alt"><div class="wrap">
+  <p class="eyebrow">R3 · {{氣泡||Bubbles}}</p>
+  <h2>{{氣泡不一定讓光變暗||Bubbles do not only darken}}</h2>
+  <div class="narrow">
+  <p>{{我們設計 <code>upper</code> 的前提是「氣泡只會擋光」，所以只相信亮的那一半樣本。這次的資料推翻了這個前提，而且兩台方向不同：||<code>upper</code> was built on the premise that bubbles only block light, so it trusts only the brighter half of the samples. This run overturns that premise, and the two units disagree in direction:}}</p>
+  </div>
+  <div class="tw"><table id="r_sign"></table></div>
+  <p class="cap">{{burst 內 14 個樣本相對於同一段乾淨 burst 的比值。V1 在 OD 3.2 的混濁液裡，氣泡把一段散射液體換成空氣，透光反而變多（最多 2.8 倍）；也有擋光的時候（低到 0.10）。V2 的光纖收光角大，氣泡把光折出收光範圍，多半變暗。||Each of the 14 samples in a burst divided by the clean burst level of the same episode. In V1, at OD 3.2, a bubble replaces a slice of scattering liquid with air and more light gets through (up to 2.8×); it also blocks light at times (down to 0.10×). V2's fibre collects over a wide angle, and a bubble refracts light out of that cone, so V2 mostly darkens.}}</p>
+
+  <div class="fig"><h4>{{氣泡測試：<code>mad</code> 與 <code>upper</code>，以及韌體認為有效的氣柱||The bubble test: <code>mad</code> and <code>upper</code>, and the air slugs the firmware accepts}}</h4>
+    <p class="sub">{{虛線＝乾淨液位。× ＝韌體旗標為無效。灰底＝flow cell 裡是空氣，讀值穩定但錯，韌體標成有效||dashed = clean level. × = flagged invalid by the firmware. grey band = air in the flow cell: a steady, wrong reading the firmware marks valid}}</p>
+    <div class="figwrap"><svg id="rfig_bubble" viewBox="0 0 900 470"></svg></div>
+  </div>
+  <div class="tw"><table id="r_bub"></table></div>
+  <p class="cap">{{只算「有液體、有氣泡」的讀值（V1 34 筆、V2 29 筆）。V1 上單側型估計器最差：<code>upper</code> 91% 的讀值偏低超過 0.05。V2 上反過來，單側型稍好。沒有任何一個估計器讓超過 35% 的氣泡讀值落在 ±0.05 之內。||Only readings with liquid and bubbles (34 on V1, 29 on V2). On V1 the one-sided estimators are worst: 91% of <code>upper</code> readings fall more than 0.05 low. On V2 it reverses and the one-sided ones are slightly better. No estimator puts more than 35% of bubble readings within ±0.05.}}</p>
+
+  <div class="grid2">
+    <div class="card"><h4>{{氣泡（burst 內不穩）||Bubbles (unsteady within a burst)}}</h4><p style="font-size:15.5px;margin:0">{{14 個樣本彼此差很多。估計器之間的差（例如 <code>mad</code> − <code>p90</code>）會變大，韌體的氣泡旗標抓到 V1 的 94%、V2 的 79%。<b>可以偵測，不能修正。</b>||The 14 samples disagree. The gap between estimators (for example <code>mad</code> − <code>p90</code>) widens, and the firmware's bubble flag catches 94% on V1 and 79% on V2. <b>Detectable, not correctable.</b>}}</p></div>
+    <div class="card"><h4>{{氣柱（整段是空氣）||Air slugs (the cell is full of air)}}</h4><p style="font-size:15.5px;margin:0">{{14 個樣本完全一致，只是整體錯了：V1 讀 0.74–0.91（應為 3.18），V2 讀 0.32（應為 0.60）。burst 內沒有任何異常可抓，<b>旗標抓到 0%</b>。只有「跟上一筆比」才看得出來。||The 14 samples agree perfectly, and are all wrong together: V1 reads 0.74–0.91 (true 3.18), V2 reads 0.32 (true 0.60). Nothing inside the burst is abnormal, so <b>the flag catches 0%</b>. Only a comparison with the previous reading reveals it.}}</p></div>
+  </div>
+</div></section>
+
+<!-- ======================================================== GATES -->
+<section id="r-gate"><div class="wrap">
+  <p class="eyebrow">R4 · {{閘門||Gates}}</p>
+  <h2>{{在估計器之後，加兩道閘門||Two gates after the estimator}}</h2>
+  <div class="narrow">
+  <p>{{同一份資料，以 bioreactor 的節奏（每 30 秒一筆，六種起點全部平均）重播五種回報方式：||The same data replayed at the bioreactor cadence (one reading per 30 s, all six phase offsets pooled) through five reporting pipelines:}}</p>
+  <ol class="steps" style="font-size:15.5px">
+    <li><b>P0</b> {{<code>upper</code>，每筆都報（10/10 介面上的做法）||<code>upper</code>, every reading reported (what the UI did on 10 Oct)}}</li>
+    <li><b>P1</b> {{<code>mad</code>，每筆都報（v3.10.9 在 bioreactor 的預設）||<code>mad</code>, every reading reported (the v3.10.9 default in the bioreactor)}}</li>
+    <li><b>P2</b> {{P1 ＋ 韌體旗標：無效就沿用上一筆有效值||P1 + firmware flag: an invalid reading repeats the last valid value}}</li>
+    <li><b>P3</b> {{P2 ＋ 離散閘門：|<code>mad</code> − <code>p90</code>| &gt; 0.03 OD 也視為無效||P2 + spread gate: |<code>mad</code> − <code>p90</code>| &gt; 0.03 OD is also invalid}}</li>
+    <li><b>P4</b> {{P3 ＋ 跳動閘門：和上一筆接受值差超過 max(0.05, 5%) 先不接受，連續 3 筆一致才接受新水準；輸出最近 3 筆接受值的中位數||P3 + jump gate: a reading more than max(0.05, 5%) from the last accepted value is held back, and a new level is accepted only after 3 agreeing readings; the output is the median of the last 3 accepted values}}</li>
+  </ol>
+  </div>
+  <div class="tw"><table id="r_pipe"></table></div>
+  <p class="cap">{{「穩態」＝每次加樣 150 秒之後，排除 11:08–11:22 的空氣事件。「延遲」＝加樣後第一次回到新水準 ±0.02 之內的時間（中位數）。氣泡測試含氣柱讀值，所以 P2、P3 擋不住。||"Steady" = more than 150 s after an addition, excluding the 11:08–11:22 air event. "Lag" = time after an addition until the output first comes within ±0.02 of the new level (median). The bubble test includes the slug readings, which is why P2 and P3 do not hold.}}</p>
+  <div class="fig"><h4>{{P0 與 P4，30 秒節奏||P0 against P4 at the 30 s cadence}}</h4>
+    <p class="sub">{{左：V1 氣泡測試。右：V1 在主實驗裡 11:04 起的空氣事件（6 分鐘的氣柱）||left: V1 bubble test. right: V1's air event in the main run from 11:04 (a 6-minute slug)}}</p>
+    <div class="figwrap"><svg id="rfig_replay" viewBox="0 0 900 290"></svg></div>
+    <p class="cap">{{右圖是 P4 的極限：氣柱持續超過 90 秒時，連續 3 筆一致的新水準會被接受。這時 P4 應該發出「無法解釋的跳動」警報，而不是默默地接受。生長中的菌液 30 秒內不會變 0.05 OD，所以任何被接受的大跳動都值得人去看。||The right panel shows P4's limit: when a slug lasts longer than 90 s, three agreeing readings make the new level acceptable. At that moment P4 should raise an "unexplained step" alarm rather than accept silently. A growing culture does not move 0.05 OD in 30 s, so any accepted large step deserves a human look.}}</p>
+  </div>
+  <div class="note">{{<b>這些門檻是用同一份資料定的。</b>τ = 0.03 是看乾淨讀值的最大離散（V1 0.026）選的；跳動門檻與 K = 3 是先驗選的，沒有調。下一次 bioreactor 跑是樣本外驗證：開跑前把 τ、跳動門檻、K 寫進預註記，不再改。||<b>These thresholds were set on the same data.</b> τ = 0.03 was chosen from the largest spread among clean readings (0.026 on V1); the jump threshold and K = 3 were chosen beforehand and not tuned. The next bioreactor run is the out-of-sample test: freeze τ, the jump threshold and K in the pre-registration before it starts.}}</div>
+</div></section>
+
+<!-- ======================================================== REFERENCE -->
+<section id="r-ref" class="alt"><div class="wrap">
+  <p class="eyebrow">R5 · {{參考通道||The reference channel}}</p>
+  <h2>{{V2 的參考通道有在工作，V1 的沒有||V2's reference channel works; V1's does not}}</h2>
+  <div class="fig"><h4>{{V2，12:44–13:04 UTC：光源暗了 40%，OD 沒動||V2, 12:44–13:04 UTC: the source dims by 40% and OD does not move}}</h4>
+    <p class="sub">{{上：樣本與參考通道的相對亮度。下：雙通道 OD（<code>od_dual</code>）與只用樣本通道的 OD（<code>od_single</code>）||top: relative brightness of the sample and reference channels. bottom: dual-channel OD (<code>od_dual</code>) and sample-only OD (<code>od_single</code>)}}</p>
+    <div class="figwrap"><svg id="rfig_ref" viewBox="0 0 900 400"></svg></div>
+    <p class="cap">{{12:51 左右兩個通道一起掉到 0.6 倍（有人碰到光纖或光源）。樣本對參考的追蹤係數 β = 0.97，<code>od_dual</code> 在整個平台上漂 −0.0005 OD/min，<code>od_single</code> 漂 0.025 OD/min。手抄的 90 mg 讀值 0.588 正好落在這段干擾裡，比前後兩點都高，是紀錄表裡唯一不單調的點。||Around 12:51 both channels fall together to 0.6× (someone touched the fibre or the source). The sample tracks the reference with β = 0.97; across the plateau <code>od_dual</code> drifts −0.0005 OD/min while <code>od_single</code> drifts 0.025 OD/min. The hand-copied 90 mg value, 0.588, was taken inside this disturbance; it sits above both neighbours and is the only non-monotonic point in the log.}}</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h4>V2 · {{光纖||fibre}}</h4><p style="font-size:15.5px;margin:0">{{40 個平台裡，樣本對參考的追蹤係數 β 中位數 0.8（理想 1）。60 mg 停 24 分鐘：參考 −0.81%、樣本 −0.79%，<code>od_dual</code> 變 −0.0003，<code>od_single</code> 變 +0.017。雙通道把光源漂移扣掉了。||Across 40 plateaus the sample tracks the reference with median β = 0.8 (ideal 1). In the 24-min hold at 60 mg: reference −0.81%, sample −0.79%; <code>od_dual</code> moves −0.0003, <code>od_single</code> +0.017. The dual channel removes source drift.}}</p></div>
+    <div class="card"><h4>V1 · {{分光鏡||beam splitter}}</h4><p style="font-size:15.5px;margin:0">{{β 從 −1.2 到 0.97，中位數約 0.3：參考通道的變化大部分沒有出現在樣本通道。60 mg 停 24 分鐘：參考 +0.48%、樣本 −0.86%，<code>od_dual</code> 變 +0.029，比不用參考的 +0.019 還大。整場參考通道上升 11%（290 → 323 lux）。每次加樣時參考沒有跟著跳（平均 +0.04%/步），所以不是混濁液反射回去，是慢速的熱漂移，而且分光鏡兩側看到的不是同一束光。||β runs from −1.2 to 0.97, median about 0.3: most of what the reference sees never reaches the sample channel. In the 24-min hold at 60 mg: reference +0.48%, sample −0.86%; <code>od_dual</code> moves +0.029, more than the +0.019 without the reference. Over the run the reference rose 11% (290 → 323 lux). It did not step at the additions (mean +0.04% per step), so this is not turbid liquid reflecting back; it is slow thermal drift, and the two sides of the splitter do not see the same light.}}</p></div>
+  </div>
+  <p class="cap">{{V1 在平台內的漂移最高到 0.015 OD/min（n = 9、13），同一時間串在同一條管路上的 V2 是 0.0000。液體是同一份，所以漂移在 V1 本身。||Within plateaus V1 drifts up to 0.015 OD/min (n = 9, 13) while V2, on the same line at the same time, shows 0.0000. The liquid is shared, so the drift is in V1 itself.}}</p>
+</div></section>
+
+<!-- ======================================================== CALIBRATION -->
+<section id="r-cal"><div class="wrap">
+  <p class="eyebrow">R6 · {{校正曲線||Calibration}}</p>
+  <h2>{{V2 一路直到底；V1 比較靈敏，但上端壓縮||V2 stays straight to the top; V1 is more sensitive but compresses}}</h2>
+  <div class="fig"><h4>{{三台儀器對濃度 C<sub>n</sub>（SOP 取 1 加 1，V = 50 mL）||All three instruments against concentration C<sub>n</sub> (SOP withdraw-1-add-1, V = 50 mL)}}</h4>
+    <p class="sub">{{左：讀值。右：相對於 n = 1–8 直線的偏離（%）||left: readings. right: departure from the line through n = 1–8 (%)}}</p>
+    <div class="figwrap"><svg id="rfig_cal" viewBox="0 0 900 320"></svg></div>
+  </div>
+  <div class="tw"><table id="r_cal"></table></div>
+  <p class="cap">{{V2 的斜率只有 V1 的 1/6：光纖收進大量前向散射光，同樣的濁度看起來比較透。換成 BioDrop 等效單位，V2 單筆雜訊是 0.005，V1 是 0.002：低濁度 V1 解析度好約 2.5 倍；到 n = 40，V2 只偏離低段直線 −2.9%，V1 偏離 −11.5%。BioDrop 本身每點相對散布約 5%，直讀從 n = 28 起被卡在 2.500，是三台裡最吵的一台。||V2's slope is a sixth of V1's: the fibre collects a lot of forward-scattered light, so the same turbidity looks clearer. In BioDrop-equivalent units a single V2 reading carries 0.005 of noise and V1 0.002: V1 resolves about 2.5× better at low turbidity; at n = 40 V2 departs only −2.9% from its low-range line against V1's −11.5%. The BioDrop scatters about 5% per point and its direct reading is pinned at 2.500 from n = 28; it is the noisiest of the three.}}</p>
+  <div class="note">{{<b>V = 50 mL。</b>讓 V2 最直的體積是 57 mL，比 50 mL 多約 7 mL，可能是管路裡的液體。只有 H1 受這個差影響：50 mL 時斜率 2.61（成立），57 mL 時 2.95（不成立）。校正架構之後另外討論。||<b>V = 50 mL.</b> The volume that makes V2 straightest is 57 mL, about 7 mL more, which may be liquid held in the tubing. Only H1 depends on the difference: the slope is 2.61 at 50 mL (held) and 2.95 at 57 mL (failed). The calibration architecture is a separate discussion.}}</div>
+</div></section>
+
+<!-- ======================================================== SCORECARD -->
+<section id="r-score" class="alt"><div class="wrap">
+  <p class="eyebrow">R7 · {{對答案||Checking the predictions}}</p>
+  <h2>{{8 條預測：3 條成立，5 條不成立||Eight predictions: 3 held, 5 failed}}</h2>
+  <p class="lead">{{預測原文沒有改，結果填在 <a href="#a-hyp">SiO₂ Assay 頁</a>的表格最後一欄。||The predictions are unchanged; the results are filled into the last column of the table on the <a href="#a-hyp">SiO₂ Assay tab</a>.}}</p>
+  <div class="tw"><table id="r_score"></table></div>
+  <p class="cap">{{最重要的一條不成立是 H6。我們預測 <code>upper</code> 在氣泡下離散少一半，實際上 V1 是 0.77 對 0.78，V2 是 0.15 對 0.16；而且 V1 上 <code>upper</code> 的平均誤差是 <code>mad</code> 的兩倍。錯在「氣泡只會變暗」這個前提。||The failure that matters most is H6. We predicted <code>upper</code> would scatter half as much under bubbles; it scattered 0.77 against 0.78 on V1 and 0.15 against 0.16 on V2, and on V1 its mean error was twice that of <code>mad</code>. The premise that bubbles only darken was wrong.}}</p>
+</div></section>
+
+<!-- ======================================================== RECOMMENDATION -->
+<section id="r-next"><div class="wrap">
+  <p class="eyebrow">R8 · {{下一輪 bioreactor||The next bioreactor run}}</p>
+  <h2>{{建議設定||Recommended configuration}}</h2>
+  <div class="tw"><table>
+    <tr><th>#</th><th>{{設定||Setting}}</th><th>{{依據||Evidence}}</th></tr>
+    <tr><td>1</td><td>{{burst 估計器用 <b><code>mad</code></b>（從 <code>upper</code> 切回來），<b>切換後重新取空白</b>||Burst estimator <b><code>mad</code></b> (switch back from <code>upper</code>), and <b>re-take the blank after switching</b>}}</td><td>{{乾淨時與其他 7 個相差 &lt; 0.004；V2 雜訊最低之一；對稱，不押注氣泡的方向。單側型在 V1 上錯得最多||within 0.004 of the other seven in clean flow; among the quietest on V2; symmetric, so it does not bet on the direction of a bubble. The one-sided estimators were the worst on V1}}</td></tr>
+    <tr><td>2</td><td>{{burst 閘門：韌體旗標 <b>或</b> |<code>mad</code> − <code>p90</code>| &gt; 0.03 OD → 這筆不採用||Burst gate: firmware flag <b>or</b> |<code>mad</code> − <code>p90</code>| &gt; 0.03 OD → reading not used}}</td><td>{{兩台都抓到 97% 的氣泡讀值，乾淨讀值誤殺 0%；主實驗中被拒的有效讀值 &lt; 0.6%。兩個欄位 v1.2.0 已經在記||catches 97% of bubble readings on both units with 0% of clean readings rejected; rejects &lt; 0.6% of valid readings in the main run. Both columns are already logged by v1.2.0}}</td></tr>
+    <tr><td>3</td><td>{{跳動閘門：與上一筆接受值差 &gt; max(0.05 OD, 5%) 先不採用；連續 3 筆彼此一致才接受新水準，<b>並發出警報</b>||Jump gate: a reading more than max(0.05 OD, 5%) from the last accepted value is held back; a new level is accepted after 3 mutually agreeing readings, <b>with an alarm</b>}}</td><td>{{唯一抓得到氣柱的方法；兩台氣泡測試的最大誤差 2.44 → 0.016（V1）、0.28 → 0.003（V2）||the only thing that catches air slugs; maximum bubble-test error 2.44 → 0.016 (V1) and 0.28 → 0.003 (V2)}}</td></tr>
+    <tr><td>4</td><td>{{回報最近 3 筆接受值的中位數（30 秒節奏下是 90 秒的窗）||Report the median of the last 3 accepted values (a 90 s window at the 30 s cadence)}}</td><td>{{生長曲線的時間尺度是小時；V2 穩態最大誤差 0.069 → 0.008||growth happens over hours; V2 steady-state maximum error 0.069 → 0.008}}</td></tr>
+    <tr><td>5</td><td>{{原始 burst、8 個估計器、閘門決定全部記錄；回報值不覆蓋資料||Log raw bursts, all eight estimators and every gate decision; the reported value never replaces data}}</td><td>{{這次能做完整分析，全靠 v1.2.0 把這些都存了下來||this analysis was possible only because v1.2.0 kept all of it}}</td></tr>
+    <tr><td>6</td><td>{{長時間運轉優先用 V2；若 V1 同時串接，只當高解析度的輔助讀值||For long runs, V2 is the primary unit; if V1 is in series, treat it as a high-resolution secondary}}</td><td>{{V2 的參考通道能扣掉 40% 的光源變化，V1 的參考通道會加入漂移（平台內最高 0.015 OD/min）||V2's reference removes a 40% source change; V1's reference adds drift (up to 0.015 OD/min within a plateau)}}</td></tr>
+    <tr><td>7</td><td>{{進液口固定在液面下、加氣泡阱；入液口不要靠近攪拌渦流||Fix the inlet below the surface and add a bubble trap; keep the inlet away from the stirring vortex}}</td><td>{{演算法只能拒絕壞讀值，不能補回讀值。少一個氣泡就少一個缺口||an algorithm can reject a bad reading but cannot replace it. Every bubble avoided is a gap avoided}}</td></tr>
+  </table></div>
+  <h3>{{開跑前要補的||Before the run}}</h3>
+  <ol class="steps" style="font-size:15.5px">
+    <li>{{把 τ = 0.03、跳動門檻 max(0.05, 5%)、K = 3 寫進 <code>PREREGISTRATION.md</code> 並 commit。||Write τ = 0.03, the jump threshold max(0.05, 5%) and K = 3 into <code>PREREGISTRATION.md</code> and commit.}}</li>
+    <li>{{確認 11:08–11:22 發生了什麼（停泵？換管？），寫進紀錄。||Find out what happened at 11:08–11:22 (pump stopped? tubing changed?) and add it to the log.}}</li>
+    <li>{{重新匯出 V1 氣泡測試的原始 burst（現在的檔案是處理後 CSV 的複本）。||Re-export the V1 bubble-test raw bursts (the current file is a copy of the processed CSV).}}</li>
+        <li>{{V2 這次有 9 次感測器重新初始化（<code>stuck_s</code>／<code>stuck_r</code>），檢查 I²C 接線。||V2 re-initialised its sensors 9 times (<code>stuck_s</code>/<code>stuck_r</code>); check the I²C wiring.}}</li>
+  </ol>
+</div></section>
